@@ -1,0 +1,263 @@
+{
+	"info": {
+		"_postman_id": "ab1c632d-cf84-4723-85ee-51c50840235e",
+		"name": "practise_postman",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Account",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a95545d4-2a5a-41e1-8f40-f8899d35947f",
+								"exec": [
+									"pm.environment.set(\"token\", pm.response.json()['data']['token']);",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"    const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"email check\", function () {",
+									"    pm.expect(jsonData.data.user.email).to.eql(\"admin@gaadiman.com\");",
+									"});",
+									"pm.test(\"phone number check\", function () {",
+									"    pm.expect(jsonData.data.user.phone).to.eql(\"1234567891\");",
+									"});",
+									"pm.test(\"admin name check\", function () {",
+									"    pm.expect(jsonData.data.user.role).to.eql(\"admin\");",
+									"});",
+									"pm.test(\"status check\", function () {",
+									"    pm.expect(jsonData.success).to.eql(true);",
+									"});",
+									"console.log(jsonData)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"phone\":\"1234567891\",\n\t\"password\":\"123456\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://54.169.92.0:3501/account/login",
+							"protocol": "http",
+							"host": [
+								"54",
+								"169",
+								"92",
+								"0"
+							],
+							"port": "3501",
+							"path": [
+								"account",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CheckLogin",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://54.169.92.0:3501/account/checkLogin",
+							"protocol": "http",
+							"host": [
+								"54",
+								"169",
+								"92",
+								"0"
+							],
+							"port": "3501",
+							"path": [
+								"account",
+								"checkLogin"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "add",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7edb0421-709a-4533-a442-1076042e6b32",
+								"exec": [
+									"pm.environment.set(\"first_name\", Math.floor(Math.random()*91));",
+									"pm.environment.set(\"last_name\", Math.floor(Math.random()*91));",
+									"pm.environment.set(\"phone\", Math.floor(Math.random() * 9999999000));",
+									"pm.environment.set(\"email\", Math.floor(Math.random()*999099)+\"@gmail.com\");",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "2895181a-880c-4dca-b0f2-d3dcc21f1059",
+								"exec": [
+									"let jsonData = pm.response.json();",
+									"let name = jsonData.data.role;",
+									"console.log(name);",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"first_name\": \"{{first_name}}\",\n\t\"last_name\": \"{{last_name}}\",\n\t\"email\":\"{{email}}\",\n\t\"password\": \"123456\",\n\t\"phone\": \"{{phone}}\",\n\t\"role\":\"aditya\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://54.169.92.0:3501/user/add",
+							"protocol": "http",
+							"host": [
+								"54",
+								"169",
+								"92",
+								"0"
+							],
+							"port": "3501",
+							"path": [
+								"user",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6d8986e3-588e-4f17-a22b-bf1a61b175dc",
+								"exec": [
+									"let jsonData = pm.response.json();",
+									"console.log(jsonData);",
+									"let owner;",
+									"",
+									"pm.test(\"owner list\",function(){",
+									"    for(let doc of jsonData.data.docs){",
+									"",
+									"if (doc.role==\"aditya\"){",
+									"    // console.log(doc);",
+									"    owner = doc;",
+									"    ",
+									"}",
+									"}",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"page\":\"1\"\n}"
+						},
+						"url": {
+							"raw": "http://54.169.92.0:3501/user/list",
+							"protocol": "http",
+							"host": [
+								"54",
+								"169",
+								"92",
+								"0"
+							],
+							"port": "3501",
+							"path": [
+								"user",
+								"list"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
